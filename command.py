@@ -104,11 +104,6 @@ def command(cmd, tcp_clients, logs, tcp, udp, clientt, tchat, world):  # gère l
                 past_pos[client] = client.pos
             logs.write("Supression des chunks...")
             world.chunks = {}
-            for client in tcp_clients:
-                client.past_chunk_pos = (None, None, None)
-                tpast_chunks = client.past_chunks
-                client.past_chunks = []
-                client.del_chunks(tpast_chunks)
             logs.write("Chargement des chunks...")
             for client in tcp_clients:
                 client.load_chunks()

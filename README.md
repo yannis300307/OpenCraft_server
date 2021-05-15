@@ -1,3 +1,6 @@
+<h1>Opencraft</h1>
+<p>Minecraft like fait en collaboration avec Big_Bang</p>
+
 <h2>Définition des types de données</h2>
 <ul>
     <li>Byte (1 byte) -> nombre entier de -128 a 127</li>

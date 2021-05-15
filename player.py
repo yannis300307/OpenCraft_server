@@ -37,8 +37,3 @@ class Player(Entity):
             self.client2.tchat.send_all("Déconnexion de " + self.name + ".", self)
         if self.name != SERVER_NAME:
             self.client2.close()
-
-    def del_chunks(self, chunks_):
-        for chunks in chunks_:
-            packet = ChunkUpdatePacket(Chunk(chunks, self.noise))
-            packet.send_to(self)

@@ -27,7 +27,7 @@ class World:
                     if client.connected:
                         tpos = (int(pos[0]/CHUNK_SIZE)+x, int(pos[1]/CHUNK_SIZE)+y, int(pos[2]/CHUNK_SIZE)+z)
                         chunk = self.get_chunk_in_pos(pos, x, y, z)
-                        if not chunk in charged_chunks:
+                        if not tpos in charged_chunks:
                             self.logs.write(
                                 "Chargement du chuk à la position x=" + str(x) + " y=" + str(y) + " z=" + str(z),
                                 print_=False)
