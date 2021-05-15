@@ -1,11 +1,13 @@
 from entity import Entity
 from config import DEFAULT_SPAWN_POS, DEFAULT_DIR, CHUNK_SIZE, SERVER_NAME
-from packets_send import KickPacket, RemoveEntityPacket
+from packets_send import KickPacket, RemoveEntityPacket, ChunkUpdatePacket
+from chunk import Chunk
 
 class Player(Entity):
     """Représente un joueur"""
-    def __init__(self, id_: int, name: "", view_distance: int, client, world, tcp_clients, logs):
+    def __init__(self, id_: int, name: "", view_distance: int, client, world, tcp_clients, logs, noise):
         self.tcp_clients = tcp_clients
+        self.noise = noise
         self.world = world
         self.logs = logs
         self.pos = list(DEFAULT_SPAWN_POS)
@@ -35,3 +37,8 @@ class Player(Entity):
             self.client2.tchat.send_all("Déconnexion de " + self.name + ".", self)
         if self.name != SERVER_NAME:
             self.client2.close()
+
+    def del_chunks(self, chunks_):
+        for chunks in chunks_:
+            packet = ChunkUpdatePacket(Chunk(chunks, self.noise))
+            packet.send_to(self)

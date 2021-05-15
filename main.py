@@ -48,7 +48,7 @@ if __name__ == "__main__":  # main
         udp.bind((ip, port))
         tcp.listen()
         # lance les threads qui connectent les clients tcp et udp et lance input_loop
-        Thread(target=lambda: accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world)).start()
+        Thread(target=lambda: accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world, noise)).start()
         Thread(target=input_loop).start()
         Thread(target=lambda: listen_udp(udp, udp_clients, world)).start()
     except:

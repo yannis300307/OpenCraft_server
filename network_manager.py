@@ -3,14 +3,14 @@ from client import Client
 from packets_manager import ReadUdpPacket
 import math
 
-def accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world):  # connecte les clients tcp
+def accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world, noise):  # connecte les clients tcp
     while True:
         logs.write("en attente ...")
         try:
             client = tcp.accept()
         except OSError:
             return
-        clientt = Client(client, world, logs, udp_clients, tcp_clients, tchat, udp, tcp)
+        clientt = Client(client, world, logs, udp_clients, tcp_clients, tchat, udp, tcp, noise)
         logs.write("Connection de " + client[1][0] + ": " + str(client[1][1]))
         tcp_clients.append(clientt)
         Thread(target=clientt.listen_tcp).start()

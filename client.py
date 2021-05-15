@@ -9,7 +9,7 @@ from command import command
 class Client(Player):
     """représente un client"""
 
-    def __init__(self, tcp_client: (), world, logs, udp_clients, tcp_clients, tchat, udp, tcp):
+    def __init__(self, tcp_client: (), world, logs, udp_clients, tcp_clients, tchat, udp, tcp, noise):
         self.tcp = tcp
         self.udp = udp
         self.tcp_clients = tcp_clients
@@ -23,9 +23,9 @@ class Client(Player):
         self.connected = True
         if self.client is not None:
             super().__init__(get_new_id(), self.get_client_socket()[1][0] + ": " + str(self.get_client_socket()[1][1]),
-                             self.view_distance, self, self.world, self.tcp_clients, logs)
+                             self.view_distance, self, self.world, self.tcp_clients, logs, noise)
         else:
-            super().__init__(get_new_id(), "None", self.view_distance, self, self.world, self.tcp_clients, logs)
+            super().__init__(get_new_id(), "None", self.view_distance, self, self.world, self.tcp_clients, logs, noise)
         self.world.entities[self.id] = self
 
     def connect_client(self, name: str, view_distance: int):  # set la distance de vue et le nom
@@ -91,7 +91,7 @@ class Client(Player):
                         packet = ReadPacket(self)
                         msg = packet.read_string()
                         if msg.startswith("/"):
-                            command(msg, self.tcp_clients, self.logs, self.tcp, self.udp, self, self.tchat)
+                            command(msg, self.tcp_clients, self.logs, self.tcp, self.udp, self, self.tchat, self.world)
                         else:
                             self.tchat.send_all(msg, self)
                         del packet
