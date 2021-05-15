@@ -11,10 +11,14 @@ class ReadPacket:  # lit un packet tcp
 
     def read_int(self):
         ret = self.client.recv(4)
-        return int.from_bytes(ret, "big")
+        return int.from_bytes(ret, "big", signed=True)
 
     def read_float(self):
         return struct.unpack(">f", self.client.recv(4))[0]
+
+    def read_byte(self):
+        ret = self.client.recv(1)
+        return int.from_bytes(ret, "big", signed=True)
 
 class ReadUdpPacket:  # lit un packet udp
     def __init__(self, data):

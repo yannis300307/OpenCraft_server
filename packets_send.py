@@ -61,7 +61,7 @@ class BlockUpdatePacket:
         self.packet.write_int(block.globalpos[0])
         self.packet.write_int(block.globalpos[1])
         self.packet.write_int(block.globalpos[2])
-        self.packet.write_byte(block.type)
+        self.packet.write_byte(BLOCKS[block.type])
 
     def send_to(self, client):
         client.send(self.packet.get_bytes())

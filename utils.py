@@ -1,7 +1,6 @@
 import math
 from config import *
 
-last_id = 0
 
 # fonctions de calcule utiles
 
@@ -11,8 +10,7 @@ def invert_bytes(bytes__):  # inverse les bytes arrays
         bytes_ += bytes__[len(bytes__) - 1 - byte].to_bytes(1, "big")
     return bytes_
 
-def get_new_id():  # génère une nouvelle id
-    global last_id
+def get_new_id(last_id):  # génère une nouvelle id
     last_id += 1
     return last_id
 
@@ -31,7 +29,7 @@ def to_block(v: float):
     return int(math.floor(v))
 
 def to_chunk(v):
-    return to_block(v/CHUNK_SIZE)
+    return to_block(float(v)/CHUNK_SIZE)
 
 def to_local(v):
     return to_block(v) - (to_chunk(v) * CHUNK_SIZE)

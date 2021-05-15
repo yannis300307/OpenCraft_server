@@ -5,7 +5,7 @@ class Chunk:
     """Représente un chunk"""
     def __init__(self, pos: (int, int, int), noise):
         self.noise = noise
-        self.blocks = [Block for _ in range(CHUNK_SIZE ** 3)]
+        self.blocks = [None for _ in range(CHUNK_SIZE ** 3)]
         self.blocks = list(self.blocks)
         for y in range(CHUNK_SIZE):
             for x in range(CHUNK_SIZE):
@@ -19,7 +19,7 @@ class Chunk:
             block.gen_bloc(self.heights_map)
 
     def get_block(self, pos: (int, int, int)):  # donne le bloc demandé
-        return self.blocks[pos[2] * (CHUNK_SIZE ** 2) + pos[1] * CHUNK_SIZE + pos[2]]
+        return self.blocks[pos[2] * (CHUNK_SIZE ** 2) + pos[1] * CHUNK_SIZE + pos[0]]
 
     def get_all_blocks(self):  # donne tous les blocs
         return self.blocks
@@ -43,5 +43,5 @@ class Chunk:
         heights = [0 for _ in range(CHUNK_SIZE ** 2)]
         for x in range(CHUNK_SIZE):
             for z in range(CHUNK_SIZE):
-                heights[z*CHUNK_SIZE+x] = (self.noise([(self.pos[0]*16+x)/CHUNK_SIZE, (self.pos[2]*16+z)/CHUNK_SIZE])+1)*32
+                heights[z*CHUNK_SIZE+x] = (self.noise([(self.pos[0]*16+x)/CHUNK_SIZE, (self.pos[2]*16+z)/CHUNK_SIZE])+1)*4
         return heights

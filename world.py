@@ -1,7 +1,7 @@
 from config import *
 from chunk import Chunk
 from utils import *
-from packets_send import ChunkUpdatePacket, SpawnEntityPacket
+from packets_send import ChunkUpdatePacket, SpawnEntityPacket, BlockUpdatePacket
 import zlib
 
 class World:
@@ -13,6 +13,7 @@ class World:
         self.entities = {}
         self.logs = logs
         self.chunks_index = {}
+        self.last_id = 0
 
     def get_chunk_in_pos(self, pos: (), addx=0, addy=0, addz=0):  # retourne le chunk à la position donnée
         return self.chunks.get(
@@ -43,6 +44,16 @@ class World:
                     else:
                         return
         return chunks
+
+    def set_block(self, pos, type_, clientt):
+        chunk = self.get_chunk_in_pos(pos, 0, 0, 0)
+        if chunk is not None:
+            block = chunk.get_block((to_local(pos[0]), to_local(pos[1]), to_local(pos[2])))
+            block.type = type_
+            packet = BlockUpdatePacket(block)
+            for client in self.tcp_clients:
+                if client != clientt:
+                    packet.send_to(client)
 
     def spawn_entities(self, client):  # fait spawner toutes les entités au client donné
         for id_ in self.entities:

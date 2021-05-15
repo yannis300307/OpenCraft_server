@@ -1,5 +1,3 @@
-import math
-
 from player import Player
 from utils import *
 from packets_send import *
@@ -22,13 +20,15 @@ class Client(Player):
         self.client = tcp_client
         self.view_distance = 3
         self.udp_client = ()
-        self.temp_bloc = None
+        self.temp_block = ()
         self.connected = True
+        id_ = get_new_id(world.last_id)
+        world.last_id = id_
         if self.client is not None:
-            super().__init__(get_new_id(), self.get_client_socket()[1][0] + ": " + str(self.get_client_socket()[1][1]),
+            super().__init__(id_, self.get_client_socket()[1][0] + ": " + str(self.get_client_socket()[1][1]),
                              self.view_distance, self, self.world, self.tcp_clients, logs, noise)
         else:
-            super().__init__(get_new_id(), "None", self.view_distance, self, self.world, self.tcp_clients, logs, noise)
+            super().__init__(id_, "None", self.view_distance, self, self.world, self.tcp_clients, logs, noise)
         self.world.entities[self.id] = self
 
     def connect_client(self, name: str, view_distance: int):  # set la distance de vue et le nom
@@ -101,16 +101,14 @@ class Client(Player):
                     elif packet_type == 4:
                         packet = ReadPacket(self)
                         x, y, z = packet.read_int(), packet.read_int(), packet.read_int()
-                        chunk = self.world.get_chunk_in_pos((to_chunk(x), to_chunk(y), to_chunk(z)))
-                        self.temp_bloc = chunk.get_block((to_local(x), to_local(y), to_local(z)))
+                        self.temp_block = (x, y, z)
                     elif packet_type == 5:
-                        self.temp_bloc = None
+                        self.temp_block = ()
                     elif packet_type == 6:
-                        self.temp_bloc.type = "air"
-                        packet = BlockUpdatePacket(self.temp_bloc)
-                        for client in self.tcp_clients:
-                            if client != self:
-                                packet.send_to(client)
+                        self.world.set_block(self.temp_block, "air", self)
+                    elif packet_type == 7:
+                        packet = ReadPacket(self)
+                        self.world.set_block((packet.read_int(), packet.read_int(), packet.read_int()), BLOCKS_ID[packet.read_byte()], self)
                 else:
                     self.despawn_entity()
                     self.tcp_clients.remove(self)
@@ -121,7 +119,7 @@ class Client(Player):
                     self.logs.write("Déconnection de " + self.get_client_socket()[1][0] + ": " + str(
                         self.get_client_socket()[1][1]))
                     return
-            except:
+            except ZeroDivisionError:
                 self.despawn_entity()
                 try:
                     self.tcp_clients.remove(self)

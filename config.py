@@ -13,6 +13,7 @@ DIRT_HEIGHT = 5
 BLOCKS_FOR_CHUNK = CHUNK_SIZE**3
 
 BLOCKS = {"air": 0, "stone": 1, "dirt": 2, "grass": 3}
+BLOCKS_ID = {0: "air", 1: "stone", 2: "dirt", 3: "grass"}
 ENTITIES = {"player": 0}
 
 DEFAULT_SPAWN_POS = (0.0, 50.0, 0.0)
