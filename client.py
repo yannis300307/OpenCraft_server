@@ -20,6 +20,7 @@ class Client(Player):
         self.client = tcp_client
         self.view_distance = 3
         self.udp_client = ()
+        self.temp_bloc = None
         self.connected = True
         if self.client is not None:
             super().__init__(get_new_id(), self.get_client_socket()[1][0] + ": " + str(self.get_client_socket()[1][1]),
@@ -95,6 +96,17 @@ class Client(Player):
                         else:
                             self.tchat.send_all(msg, self)
                         del packet
+                    elif packet_type == 4:
+                        packet = ReadPacket(self)
+                        x, y, z = packet.read_int(), packet.read_int(), packet.read_int()
+                        chunk = self.world.get_chunk_in_pos((x, y, z))
+                        self.temp_bloc = chunk.get_block((int(x/CHUNK_SIZE), int(y/CHUNK_SIZE), int(z/CHUNK_SIZE)))
+                    elif packet_type == 6:
+                        self.temp_bloc.type = "air"
+                        packet = BlockUpdatePacket(self.temp_bloc)
+                        for client in self.tcp_clients:
+                            if client != self:
+                                packet.send_to(client)
                 else:
                     self.despawn_entity()
                     self.tcp_clients.remove(self)

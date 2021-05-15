@@ -3,7 +3,6 @@ from config import *
 class Block:
     """Représente un bloc"""
     def __init__(self, localpos: (int, int, int), globalpos: (int, int, int), nbt: {}):
-
         self.type = "air"
         self.localpos = localpos
         self.nbt = nbt

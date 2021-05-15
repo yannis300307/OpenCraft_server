@@ -56,7 +56,7 @@ class ChunkUpdatePacket:
         client.send(self.packet.get_bytes())
 
 class BlockUpdatePacket:
-    def __int__(self, block):
+    def __init__(self, block):
         self.packet = WritePacket(5)
         self.packet.write_int(block.globalpos[0])
         self.packet.write_int(block.globalpos[1])

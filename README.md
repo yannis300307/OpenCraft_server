@@ -49,6 +49,25 @@
             <li>Char Array : Player Message</li>
         </ul>
     </li>
+    <li>
+        <h4>StartBreakingPacket (4)</h4>
+        <ul>
+            <li>Int : Block X</li>
+            <li>Int : Block Y</li>
+            <li>Int : Block Z</li>
+        </ul>
+    </li>
+    <li><h4>StopBreakingPacket (5)</h4></li>
+    <li><h4>BreakBlockPacket (6)</h4></li>
+    <li>
+        <h4>PlaceBlockPacket (7)</h4>
+        <ul>
+            <li>Int : Block X</li>
+            <li>Int : Block Y</li>
+            <li>Int : Block Z</li>
+            <li>Byte : Block Type</li>
+        </ul>
+    </li>
 </ul>
 <h3>Client Side</h3>
 <ul>
