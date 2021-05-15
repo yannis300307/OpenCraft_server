@@ -23,8 +23,8 @@ def listen_udp(udp, udp_clients, world):  # connecte les clients udp
         except:
             return
         packet = ReadUdpPacket(data)
-        PacketId = packet.read_byte()
-        if PacketId == 2:
+        packet_id = packet.read_byte()
+        if packet_id == 2:
             if client in udp_clients:
                 clientt: Client = udp_clients[client]
                 pos = [0, 0, 0]

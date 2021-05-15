@@ -1,4 +1,5 @@
 import math
+from config import *
 
 last_id = 0
 
@@ -25,3 +26,12 @@ def floor_of_multiple(nbr, multiple):  # donne le sol du multiple
 
 def get_distance(pos1: (), pos2: ()):  # donne la distance 3D
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2 + (pos1[2] - pos2[2]) ** 2)
+
+def to_block(v: float):
+    return int(math.floor(v))
+
+def to_chunk(v):
+    return to_block(v/CHUNK_SIZE)
+
+def to_local(v):
+    return to_block(v) - (to_chunk(v) * CHUNK_SIZE)

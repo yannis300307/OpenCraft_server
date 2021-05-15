@@ -1,5 +1,7 @@
+import math
+
 from player import Player
-from utils import get_new_id
+from utils import *
 from packets_send import *
 from packets_manager import ReadPacket
 from threading import Thread
@@ -79,7 +81,7 @@ class Client(Player):
                         self.load_chunks()
                         self.spawn_player()
                         self.world.spawn_entities(self)
-                        Thread(target=self.load_chunks_loop()).start()
+                        Thread(target=self.load_chunks_loop).start()
                     elif packet_type == 1:
                         self.despawn_entity()
                         self.tcp_clients.remove(self)
@@ -99,8 +101,10 @@ class Client(Player):
                     elif packet_type == 4:
                         packet = ReadPacket(self)
                         x, y, z = packet.read_int(), packet.read_int(), packet.read_int()
-                        chunk = self.world.get_chunk_in_pos((x, y, z))
-                        self.temp_bloc = chunk.get_block((int(x/CHUNK_SIZE), int(y/CHUNK_SIZE), int(z/CHUNK_SIZE)))
+                        chunk = self.world.get_chunk_in_pos((to_chunk(x), to_chunk(y), to_chunk(z)))
+                        self.temp_bloc = chunk.get_block((to_local(x), to_local(y), to_local(z)))
+                    elif packet_type == 5:
+                        self.temp_bloc = None
                     elif packet_type == 6:
                         self.temp_bloc.type = "air"
                         packet = BlockUpdatePacket(self.temp_bloc)

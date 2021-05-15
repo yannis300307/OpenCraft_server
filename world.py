@@ -1,8 +1,8 @@
 from config import *
 from chunk import Chunk
-from utils import ceil_of_multiple
+from utils import *
 from packets_send import ChunkUpdatePacket, SpawnEntityPacket
-
+import zlib
 
 class World:
     """Représente le monde"""
@@ -16,7 +16,7 @@ class World:
 
     def get_chunk_in_pos(self, pos: (), addx=0, addy=0, addz=0):  # retourne le chunk à la position donnée
         return self.chunks.get(
-            (int(pos[0]/CHUNK_SIZE)+addx, int(pos[1]/CHUNK_SIZE)+addy, int(pos[2]/CHUNK_SIZE)+addz))
+            (to_chunk(pos[0])+addx, to_chunk(pos[1])+addy, to_chunk(pos[2])+addz))
 
     def load_chunks_surroundings(self, pos: (), distance: int, client, charged_chunks):  # charge les chunks alentours et les envoient au client donné
         chunk_charged = 0
@@ -25,7 +25,7 @@ class World:
             for x in range(-distance, distance):
                 for z in range(-distance, distance):
                     if client.connected:
-                        tpos = (int(pos[0]/CHUNK_SIZE)+x, int(pos[1]/CHUNK_SIZE)+y, int(pos[2]/CHUNK_SIZE)+z)
+                        tpos = (to_chunk(pos[0])+x, to_chunk(pos[1])+y, to_chunk(pos[2])+z)
                         chunk = self.get_chunk_in_pos(pos, x, y, z)
                         if not tpos in charged_chunks:
                             self.logs.write(
@@ -80,7 +80,6 @@ class World:
     def charge_from_file(self):  # charge les index à partir du fichier de monde
         world_file = open(DEFAULT_WORLD_FILE, "br")
         size = int.from_bytes(world_file.read(4), "big", signed=False)
-        indexes = world_file.read(size*16)
         for index in range(size):
-            self.chunks_index[()]
+            self.chunks_index[(int.from_bytes(world_file.read(4), "big"), int.from_bytes(world_file.read(4), "big"), int.from_bytes(world_file.read(4), "big"))] = int.from_bytes(world_file.read(4), "big")
 
