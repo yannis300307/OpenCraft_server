@@ -1,5 +1,5 @@
 import sys
-
+from utils import get_player_pos
 from config import SERVER_NAME
 
 
@@ -11,25 +11,36 @@ def command(cmd, tcp_clients, logs, tcp, udp, clientt, tchat, world):  # gère l
         client_name = clientt
     if tcmd[0] == "/tp":
         logs.write("Commande /tp utilisée par " + client_name + ".")
-        if len(tcmd) == 5 or len(tcmd) == 7:
+        if len(tcmd) == 5 or len(tcmd) == 7 or len(tcmd) == 3:
             find = False
             for client in tcp_clients:
                 if client.name.lower() == tcmd[1].lower():
                     try:
+                        pl_pos = client.pos
                         if len(tcmd) == 5:
-                            client.set_pos((float(tcmd[2]), float(tcmd[3]), float(tcmd[4])), imperative=True)
+                            client.set_pos((get_player_pos(tcmd[2], 0, pl_pos), get_player_pos(tcmd[3], 1, pl_pos), get_player_pos(tcmd[4], 2, pl_pos)), imperative=True)
                             logs.write("Téléportation de " + client.name + " en x=" + tcmd[2] + " y=" + tcmd[3] + " z=" + tcmd[4])
-                        else:
-                            client.set_pos((float(tcmd[2]), float(tcmd[3]), float(tcmd[4])), (float(tcmd[5]), float(tcmd[6])), imperative=True)
+                        elif len(tcmd) == 7:
+                            client.set_pos((get_player_pos(tcmd[2], 0, pl_pos), get_player_pos(tcmd[3], 1, pl_pos), get_player_pos(tcmd[4], 2, pl_pos)), (float(tcmd[5]), float(tcmd[6])), imperative=True)
                             logs.write(
                                 "Téléportation de " + client.name + " en x=" + tcmd[2] + " y=" + tcmd[3] + " z=" + tcmd[4] + " pitch=" + tcmd[5], " yaw=" + tcmd[6])
+                        elif len(tcmd) == 3:
+                            findd = False
+                            for clientt in tcp_clients:
+                                client.set_pos(clientt.pos, imperative=True)
+                                logs.write(
+                                    "Téléportation de " + client.name + " à la position de " + tcmd[2] + ".")
+                                findd = True
+                                break
+                            if not findd:
+                                logs.write("Joueur cible " + tcmd[2] + " non trouvé.")
                     except ValueError:
                         logs.write("Argument(s) invalide(s).")
                     find = True
                     break
             if not find:
                 logs.write("Joueur " + tcmd[1] + " non trouvé.")
-        elif len(tcmd) < 5:
+        else:
             logs.write("Argument(s) manquant(s) :")
             logs.write("/tp [pseudo] [x] [y] [z] {[pitch] [yaw]}")
     elif tcmd[0] == "/stop":
@@ -95,6 +106,9 @@ def command(cmd, tcp_clients, logs, tcp, udp, clientt, tchat, world):  # gère l
                     break
             if not find:
                 logs.write("Joueur " + tcmd[1] + " non trouvé.")
+        else:
+            logs.write("Seul 2 arguments sont attendus.")
+            logs.write("/getpos [pseudo]")
     elif tcmd[0] == "/purgechunks":
         if len(tcmd) == 1:
             logs.write("Rechargement des chunks ...")
@@ -109,5 +123,12 @@ def command(cmd, tcp_clients, logs, tcp, udp, clientt, tchat, world):  # gère l
                 client.load_chunks()
                 client.set_pos(past_pos[client], imperative=True)
             logs.write("fini")
+        else:
+            logs.write("Aucun argument n'est attendu.")
+    elif tcmd[0] == "/save":
+        if len(tcmd) == 1:
+            world.save()
+        else:
+            logs.write("Aucun argument n'est attendu.")
     else:
         logs.write("Commande " + tcmd[0] + " inconnue !")

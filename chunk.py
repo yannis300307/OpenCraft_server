@@ -43,5 +43,5 @@ class Chunk:
         heights = [0 for _ in range(CHUNK_SIZE ** 2)]
         for x in range(CHUNK_SIZE):
             for z in range(CHUNK_SIZE):
-                heights[z*CHUNK_SIZE+x] = (self.noise([(self.pos[0]*16+x)/CHUNK_SIZE, (self.pos[2]*16+z)/CHUNK_SIZE])+1)*4
+                heights[z*CHUNK_SIZE+x] = (self.noise([(self.pos[0]*16+x)/CHUNK_SIZE, (self.pos[2]*16+z)/CHUNK_SIZE])+1)*WORLD_AMPLIFICATION
         return heights

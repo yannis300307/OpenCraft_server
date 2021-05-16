@@ -37,7 +37,7 @@ if __name__ == "__main__":  # main
         tcp_clients = []
         udp_clients = {}
 
-        noise = perlin_noise.PerlinNoise(octaves=1, seed=SEED)
+        noise = perlin_noise.PerlinNoise(octaves=WORLD_OCTAVE, seed=SEED)
 
         world = World(tcp_clients, noise, logs)
 
@@ -51,6 +51,6 @@ if __name__ == "__main__":  # main
         Thread(target=lambda: accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world, noise)).start()
         Thread(target=input_loop).start()
         Thread(target=lambda: listen_udp(udp, udp_clients, world)).start()
-    except:
+    except ZeroDivisionError:
         # gère les exceoption et les écrit dans les logs
-        logs.write(sys.exc_info()[0].__name__ + ": " + sys.exc_info()[1].args[0] + " | " + str(sys.exc_info()[2]))
+        logs.write(str(sys.exc_info()[0].__name__) + ": " + str(sys.exc_info()[1].args[0]) + " | " + str(sys.exc_info()[2]))

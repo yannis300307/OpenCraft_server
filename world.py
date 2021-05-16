@@ -12,7 +12,7 @@ class World:
         self.chunks = {}
         self.entities = {}
         self.logs = logs
-        self.chunks_index = {}
+        self.chunks_indexes = {}
         self.last_id = 0
         self.charge_from_file()
 
@@ -24,14 +24,15 @@ class World:
             size = int.from_bytes(world_file.read(4), "big")
             chunks = world_file.read()[size*16:]
             pos_ = (to_chunk(pos[0])+addx, to_chunk(pos[1])+addy, to_chunk(pos[2])+addz)
-            if pos_ in list(self.chunks_index.keys()):
-                chunk = chunks[self.chunks_index[pos_]*BLOCKS_FOR_CHUNK: self.chunks_index[pos_]*BLOCKS_FOR_CHUNK+BLOCKS_FOR_CHUNK]
+            if pos_ in list(self.chunks_indexes.keys()):
+                chunk = chunks[self.chunks_indexes[pos_] * BLOCKS_FOR_CHUNK: self.chunks_indexes[pos_] * BLOCKS_FOR_CHUNK + BLOCKS_FOR_CHUNK]
                 chunk_ = Chunk(pos_, self.noise)
                 for block_ in range(len(chunk)):
                     chunk_.blocks[block_].type = BLOCKS_ID[chunk[block_]]
+                ret = chunk_
         return ret
 
-    def load_chunks_surroundings(self, pos: (), distance: int, client, charged_chunks):  # charge les chunks alentours et les envoient au client donné
+    def load_chunks_surroundings(self, pos: (), distance: int, client, charged_chunks):  # charge les chunks alentours et les envoi au client donné
         chunk_charged = 0
         chunks = []
         for y in range(-distance, min(distance, ceil_of_multiple(pos[1], 16))):
@@ -39,8 +40,8 @@ class World:
                 for z in range(-distance, distance):
                     if client.connected:
                         tpos = (to_chunk(pos[0])+x, to_chunk(pos[1])+y, to_chunk(pos[2])+z)
-                        chunk = self.get_chunk_in_pos(pos, x, y, z)
                         if not tpos in charged_chunks:
+                            chunk = self.get_chunk_in_pos(pos, x, y, z)
                             self.logs.write(
                                 "Chargement du chuk à la position x=" + str(x) + " y=" + str(y) + " z=" + str(z),
                                 print_=False)
@@ -49,9 +50,9 @@ class World:
                                 self.chunks[tpos] = Chunk(tpos, self.noise)
                                 chunk = self.chunks[tpos]
                                 self.chunks[tpos].gen_chunk()
-                            packet = ChunkUpdatePacket(chunk)
-                            packet.send_to(client)
-                            del packet
+                            if not chunk.is_empty():
+                                packet = ChunkUpdatePacket(chunk)
+                                packet.send_to(client)
                         chunks.append(tpos)
                     else:
                         return
@@ -90,7 +91,8 @@ class World:
             data += chunk[0].to_bytes(4, "big", signed=True)
             data += chunk[1].to_bytes(4, "big", signed=True)
             data += chunk[2].to_bytes(4, "big", signed=True)
-            data += index.to_bytes(4, "big")
+            data += index.to_bytes(4, "big", signed=False)
+            index += 1
         self.logs.write("Ajout des chunks...")
         for chunk in pos_list:
             data += self.chunks[chunk].get_bytes_array()
@@ -104,4 +106,27 @@ class World:
         world_file = open(DEFAULT_WORLD_FILE, "br")
         size = int.from_bytes(world_file.read(4), "big", signed=False)
         for index in range(size):
-            self.chunks_index[(int.from_bytes(world_file.read(4), "big"), int.from_bytes(world_file.read(4), "big"), int.from_bytes(world_file.read(4), "big"))] = int.from_bytes(world_file.read(4), "big")
+            x = int.from_bytes(world_file.read(4), "big", signed=True)
+            y = int.from_bytes(world_file.read(4), "big", signed=True)
+            z = int.from_bytes(world_file.read(4), "big", signed=True)
+            index_ = int.from_bytes(world_file.read(4), "big", signed=False)
+            self.chunks_indexes[(x, y, z)] = index_
+
+    def save_chunk(self, chunk):
+        world_file = open(DEFAULT_WORLD_FILE, "br")
+        if chunk.pos in self.chunks_indexes:
+            data = world_file.read()
+            world_file.close()
+            start = len(self.chunks_indexes)*16 + 4
+            datapast = data[:start+self.chunks_indexes[chunk.pos]*BLOCKS_FOR_CHUNK]
+            datanext = data[start+self.chunks_indexes[chunk.pos]*BLOCKS_FOR_CHUNK+BLOCKS_FOR_CHUNK:]
+            data = chunk.get_bytes_array().join([datapast, datanext])
+            world_file = open(DEFAULT_WORLD_FILE, "bw")
+            world_file.write(data)
+            world_file.close()
+        else:
+            self.chunks_indexes[chunk.pos] = len(self.chunks_indexes) + 1
+            # data += chunk.pos[0].to_bytes(4, "big", signed=True)
+            # data += chunk.pos[1].to_bytes(4, "big", signed=True)
+            # data += chunk.pos[2].to_bytes(4, "big", signed=True)
+            # data += index.to_bytes(4, "big", signed=False)

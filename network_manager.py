@@ -2,6 +2,8 @@ from threading import Thread
 from client import Client
 from packets_manager import ReadUdpPacket
 import math
+from utils import to_chunk
+from config import *
 
 def accept_tcp(logs, tcp, tcp_clients, udp, tchat, udp_clients, world, noise):  # connecte les clients tcp
     while True:
@@ -32,7 +34,11 @@ def listen_udp(udp, udp_clients, world):  # connecte les clients udp
                 pos[1] = packet.read_float()
                 pos[2] = packet.read_float()
                 if not math.nan in pos:
-                    clientt.set_pos(pos)
+                    if (to_chunk(pos[0]), to_chunk(pos[1]), to_chunk(pos[2])) in clientt.past_chunks:
+                        clientt.set_pos(pos)
+                        clientt.last_valid_pos = pos
+                    else:
+                        clientt.set_pos(client.last_valid_pos, imperative=True)
                 clientt.dir[0] = packet.read_float()
                 clientt.dir[1] = packet.read_float()
                 world.update_entities(clientt.id, pos[0], pos[1], pos[2], clientt.dir[0], clientt.dir[1])

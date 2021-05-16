@@ -22,6 +22,7 @@ class Client(Player):
         self.udp_client = ()
         self.temp_block = ()
         self.connected = True
+        self.last_valid_pos = DEFAULT_SPAWN_POS
         id_ = get_new_id(world.last_id)
         world.last_id = id_
         if self.client is not None:
@@ -56,7 +57,6 @@ class Client(Player):
                     self.client[0].send(bytes_)
             except:
                 self.connected = False
-                # self.despawn_entity()
                 try:
                     self.tcp_clients.remove(self)
                 except ValueError:
@@ -76,6 +76,17 @@ class Client(Player):
                         self.udp_client = (self.get_client_socket()[1][0], packet.read_int())
                         self.udp_clients[self.udp_client] = self
                         del packet
+                        for car in self.name:
+                            if not car in CHARACTERS_FOR_NAME:
+                                self.kick("Caractère(s) invalide(s).")
+                        if len(self.name) > 10:
+                            self.kick("Le pseudo dépasse la taille maximum.")
+                        elif len(self.name) < 3:
+                            self.kick("Le pseudo est trop court")
+                        for client in self.tcp_clients:
+                            if client != self:
+                                if client.name.lower() == self.name.lower():
+                                    self.kick("Quelqu'un a déjà prit ce nom !")
                         packet = LoginSuccessPacket(self)
                         packet.send_to(self)
                         self.load_chunks()
@@ -119,7 +130,7 @@ class Client(Player):
                     self.logs.write("Déconnection de " + self.get_client_socket()[1][0] + ": " + str(
                         self.get_client_socket()[1][1]))
                     return
-            except ZeroDivisionError:
+            except:
                 self.despawn_entity()
                 try:
                     self.tcp_clients.remove(self)

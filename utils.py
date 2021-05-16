@@ -33,3 +33,22 @@ def to_chunk(v):
 
 def to_local(v):
     return to_block(v) - (to_chunk(v) * CHUNK_SIZE)
+
+def is_float(v):
+    try:
+        float(v)
+        return True
+    except ValueError:
+        return False
+
+def get_player_pos(p: str, pos_axis: int, start_pos):
+    if p.startswith("~"):
+        if p == "~":
+            p = "~0"
+        if is_float(p[1:]):
+            pl_p = list(start_pos)
+            pl_p[pos_axis] = start_pos[pos_axis] + float(p[1:])
+            return float(pl_p[pos_axis])
+    else:
+        if is_float(p):
+            return float(p)
