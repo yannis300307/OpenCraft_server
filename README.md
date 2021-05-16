@@ -1,5 +1,5 @@
 <h1>Opencraft</h1>
-<p>Minecraft like fait en collaboration avec Big_Bang</p>
+<p>Minecraft like fait en collaboration avec Tipragot</p>
 
 <h2>Définition des types de données</h2>
 <ul>
