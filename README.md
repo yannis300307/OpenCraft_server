@@ -1,5 +1,5 @@
 <h1>Opencraft</h1>
-<p>Minecraft like fait en collaboration avec Tipragot : <a href="https://github.com/Tipragot/Opencraft"> https://github.com/Tipragot/Opencraft</a>. </p>
+<p>Minecraft like fait en collaboration avec Tipragot accéssible <a href="https://github.com/Tipragot/Opencraft"> ICI</a>. </p>
 
 <h2>Définition des types de données</h2>
 <ul>
