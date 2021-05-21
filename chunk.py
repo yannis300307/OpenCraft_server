@@ -1,12 +1,14 @@
 from config import *
 from block import Block
+from utils import to_chunk
 
 class Chunk:
     """Représente un chunk"""
-    def __init__(self, pos: (int, int, int), noise):
+    def __init__(self, pos: (int, int, int), noise, world):
         self.noise = noise
         self.blocks = [None for _ in range(CHUNK_SIZE ** 3)]
         self.blocks = list(self.blocks)
+        self.world = world
         for y in range(CHUNK_SIZE):
             for x in range(CHUNK_SIZE):
                 for z in range(CHUNK_SIZE):

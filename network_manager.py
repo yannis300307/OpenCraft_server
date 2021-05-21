@@ -38,7 +38,7 @@ def listen_udp(udp, udp_clients, world):  # connecte les clients udp
                         clientt.set_pos(pos)
                         clientt.last_valid_pos = pos
                     else:
-                        clientt.set_pos(client.last_valid_pos, imperative=True)
+                        clientt.set_pos(clientt.last_valid_pos, imperative=True)
                 clientt.dir[0] = packet.read_float()
                 clientt.dir[1] = packet.read_float()
                 world.update_entities(clientt.id, pos[0], pos[1], pos[2], clientt.dir[0], clientt.dir[1])

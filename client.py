@@ -130,7 +130,7 @@ class Client(Player):
                     self.logs.write("Déconnection de " + self.get_client_socket()[1][0] + ": " + str(
                         self.get_client_socket()[1][1]))
                     return
-            except:
+            except ZeroDivisionError:
                 self.despawn_entity()
                 try:
                     self.tcp_clients.remove(self)
