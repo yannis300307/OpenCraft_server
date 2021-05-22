@@ -36,7 +36,6 @@ class World:
             self.chunks_indexes[tpos] = len(self.chunks_indexes) + 1
             chunk = self.chunks[tpos]
             chunk.gen_chunk()
-            self.gen_trees(tpos)
             ret = chunk
         return ret
 
@@ -54,6 +53,8 @@ class World:
                                 "Chargement du chuk à la position x=" + str(x) + " y=" + str(y) + " z=" + str(z),
                                 print_=False)
                             chunk_charged += 1
+                            if not chunk.trees_generated:
+                                self.gen_trees(tpos)
                             if not chunk.is_empty():
                                 packet = ChunkUpdatePacket(chunk)
                                 packet.send_to(client)

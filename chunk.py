@@ -9,6 +9,7 @@ class Chunk:
         self.blocks = [None for _ in range(CHUNK_SIZE ** 3)]
         self.blocks = list(self.blocks)
         self.world = world
+        self.trees_generated = False
         for y in range(CHUNK_SIZE):
             for x in range(CHUNK_SIZE):
                 for z in range(CHUNK_SIZE):
