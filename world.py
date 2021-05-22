@@ -13,7 +13,7 @@ class World:
         self.logs = logs
         self.chunks_indexes = {}
         self.last_id = 0
-        self.noise2 = PerlinNoise(octaves=3, seed=SEED)
+        self.noise2 = PerlinNoise(octaves=6, seed=SEED)
         self.charge_from_file()
 
     def get_chunk_in_pos(self, pos: (), addx=0, addy=0, addz=0):  # retourne le chunk à la position donnée
@@ -98,7 +98,6 @@ class World:
                 if self.get_block(block_pos).type == "grass":
                     map_ = (self.noise2([(chunks_zone[0] * 16 + x) / CHUNK_SIZE, (chunks_zone[2] * 16 + z) / CHUNK_SIZE]) + 1)
                     if map_ > 1.5:
-                        print("gen")
                         self.set_block((block_pos[0], block_pos[1] + 1, block_pos[2]), "stone")
                         self.set_block((block_pos[0], block_pos[1] + 2, block_pos[2]), "stone")
                         self.set_block((block_pos[0], block_pos[1] + 3, block_pos[2]), "stone")
