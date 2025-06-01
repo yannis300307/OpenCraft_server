@@ -5,9 +5,9 @@
 <ul>
     <li>Byte (1 byte) -> nombre entier de -128 a 127</li>
     <li>Bool (1 byte) -> true (0x01) ou false (0x00)</li>
-    <li>Char (1 byte) -> un caractaire</li>
+    <li>Char (1 byte) -> un caractère</li>
     <li>Int (4 bytes) -> nombre entier de -2 147 483 648 a 2 147 483 647</li>
-    <li>Float (4 bytes) -> nombre a virgule</li>
+    <li>Float (4 bytes) -> nombre à virgule</li>
     <li>Type Array (taille variable)<ul>
         <li>Int : Length</li>
         <li>Byte Array : Data</li></ul>
@@ -151,7 +151,7 @@
 
 <h2>Précision sur les données des chunk</h2>
 <p>
-	C'est un tableau de byte (allant de -128 a 128) qui corespondent au type de chaque block du chunk<br>
+	C'est un tableau de bytes (allant de -128 a 128) qui corespondent au type de chaque block du chunk<br>
 	Pour connaitre l'index d'une position dans le chunk on utilise ce calcul :
 </p>
 <p>
@@ -165,8 +165,8 @@
 <h2>Protocole de connection</h2>
 <ul>
     <li>Le client envoit un ConnectionPacket (tcp)</li>
-    <li>Le serveur réponde avec un LoginSuccessPacket (tcp)</li>
-    <li>Le serveur envoit tous les chunks a charger (ChunkUpdatePacket en tcp)</li>
+    <li>Le serveur répond avec un LoginSuccessPacket (tcp)</li>
+    <li>Le serveur envoit tous les chunks à charger (ChunkUpdatePacket en tcp)</li>
     <li>Le serveur envoit un JoinWorldPacket (tcp)</li>
     <li>Le joueur est maintenant connecté</li>
 </ul>
